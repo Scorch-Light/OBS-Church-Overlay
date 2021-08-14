@@ -1,0 +1,78 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Advert Control Panel</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/jquery.js"></script>
+  </head>
+  <body id="advert">
+  
+	<div class="panel panel-block panel-full">
+		
+		<input class="field" id="notice_location" placeholder="Notice Location">
+		<input class="field" id="rolling_advert_location" placeholder="Rolling Advert Location">
+		<input class="field" id="rolling_advert_time" placeholder="8000">
+		
+		<button class="onethird" id="sender" onclick="function_update()">Update</button>
+		<button class="onethird" id="sender" onclick="function_read()">Undo</button>
+		<button class="onethird" id="sender" onclick="function_reset()">Reset</button>
+		
+	</div>
+	
+	
+	<script>
+		var store_sett=["../../Notices/","../../Rolling Advert/", "8000"]
+		
+		function_read()
+	
+		
+		var uc = new BroadcastChannel('obs-update-channel');
+		
+		/* update fields*/
+		function function_update() {
+		
+			store_sett=[$("#notice_location:text").val(),$("#rolling_advert_location:text").val(),$("#rolling_advert_time:text").val() ]
+	
+			localStorage.setItem("sett", JSON.stringify(store_sett));
+			
+			setTimeout(function(){ uc.postMessage('update'); },100);
+		};
+		
+		
+		
+		
+		
+		/* Read save*/
+		function function_read() {
+			
+			store_sett=["../../Notices/","../../Rolling Advert/","8000"]
+			var test = JSON.parse(localStorage.getItem("sett"));
+			if (test[0] !== "") { store_sett = test }
+			
+			$("#notice_location:text").val(store_sett[0])
+			$("#rolling_advert_location:text").val(store_sett[1])
+			$("#rolling_advert_time:text").val(store_sett[2])
+			
+		};
+		
+		/* Read save*/
+		function function_reset() {
+			
+			store_sett=["../../Notices/","../../Rolling Advert/","8000"]
+			
+			$("#notice_location:text").val(store_sett[0])
+			$("#rolling_advert_location:text").val(store_sett[1])
+			$("#rolling_advert_time:text").val(store_sett[2])
+			
+			function_update()
+			
+		};
+		
+
+					
+	</script>
+	
+  </body>
+</html>

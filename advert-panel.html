@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Advert Control Panel</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/jquery.js"></script>
+  </head>
+  <body id="advert">
+  
+	<div class="panel panel-block">
+		<input id="advert_src" class="field" placeholder="Advert">
+		<button class="onethird" id="sender" onclick="function_add()">Add</button>
+		<button class="onethird" id="sender" onclick="function_edit()">Edit</button>
+		<div id="current_file">none</div>
+	</div>
+	
+		
+	<div class="panel panel-field">
+		<ul id="predefined" class="img-list">
+		</ul>
+	</div>
+	
+	
+	<script>
+		var store_advert=["cover.jpg","giving.jpg"]
+		
+		function_read()
+		$(".remove_notice").hide()
+			
+		var bc = new BroadcastChannel('obs-advert-channel');
+		
+		var uc = new BroadcastChannel('obs-update-channel');
+		uc.onmessage = function (){function_upp();};
+		
+		/* add a notice*/
+		function function_add() { 
+				store_advert.push($("#advert_src:text").val())
+				$("#advert_src:text").val("")
+				function_store()
+				function_upp()
+		};
+	
+		/* store advert*/
+		function function_store() {
+			localStorage.setItem("advert", JSON.stringify(store_advert));
+		};
+		
+		/* READ advert*/
+		function function_read() {
+			store_advert=["cover.jpg","giving.jpg"]
+			var test = JSON.parse(localStorage.getItem("advert"));
+			if (test[0] !== "") { store_advert = test }
+			
+			function_upp()
+		};
+		
+		/* update html*/
+		var cycle;
+		
+		function function_upp(){
+				var text = ""
+				var i;
+				var store_sett = JSON.parse(localStorage.getItem("sett"));
+				
+				
+				for (i = 0; i < store_advert.length; i++){
+					text += "<li><div><img src=\"" + store_sett[1] + store_advert[i] + "\" /></div><button class=\"remove_notice\" id=\"sender\" onclick=\"function_remove(" + i + ")\">X</button> </li> ";
+				}
+				document.getElementById("predefined").innerHTML = text;
+				$(".remove_notice").hide()
+				
+				clearInterval(cycle)
+				cycle = setInterval(cycleadvert, store_sett[2]);
+		};
+		/* edit advert*/
+		function function_edit(){
+			 $(".remove_notice").toggle();
+		};
+
+		/* remove advert*/
+		function function_remove(i){
+			store_advert.splice(i, 1);
+			function_store()
+			function_upp()
+		};
+		
+		/* cycle adverts */	
+		var d=0 
+		
+		function cycleadvert() { 
+			if (d==store_advert.length-1) {d=0} else d=d+1
+			document.getElementById("current_file").innerHTML = store_advert[d];
+			bc.postMessage(store_advert[d]); /* send */
+		};
+		
+		
+		
+		
+
+		
+	</script>
+	
+  </body>
+</html>

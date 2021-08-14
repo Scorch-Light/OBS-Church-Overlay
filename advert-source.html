@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<link rel="stylesheet" href="css/style.css">
+    <title>Receiver</title>
+	
+	<link rel="stylesheet" href="css/style.css">
+	<script>
+		var bc = new BroadcastChannel('obs-advert-channel');
+		bc.onmessage = function (ev) {
+			received_data=ev.data.split("|");
+			var store_sett = JSON.parse(localStorage.getItem("sett"));
+			document.getElementById("advert_img").src = (store_sett[1] + received_data[0]);
+			console.log ('SOURCE: ' + received_data[0]);
+		}
+	</script>
+  </head>
+  <body>
+	<img id="advert_img" class="fullscreen">
+  </body>
+</html>
